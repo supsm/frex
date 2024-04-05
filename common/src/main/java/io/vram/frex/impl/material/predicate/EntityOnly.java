@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 
-import net.minecraft.Util;
 import net.minecraft.advancements.critereon.EntityEquipmentPredicate;
 import net.minecraft.advancements.critereon.EntityFlagsPredicate;
 import net.minecraft.advancements.critereon.MobEffectsPredicate;
@@ -95,7 +94,7 @@ public class EntityOnly extends EntityBiPredicate {
 					}
 				}
 
-				return catType == null || entity instanceof Cat && ((Cat) entity).getResourceLocation().equals(catType);
+				return catType == null || entity instanceof Cat && ((Cat) entity).getTextureId().equals(catType);
 			}
 		}
 	}
@@ -119,7 +118,7 @@ public class EntityOnly extends EntityBiPredicate {
 	}
 
 	public static <T> T predicateFromJson(@Nullable JsonElement jsonElement, Codec<T> codec) {
-		return jsonElement != null && !jsonElement.isJsonNull() ? Util.getOrThrow(codec.parse(JsonOps.INSTANCE, jsonElement), JsonParseException::new) : null;
+		return jsonElement != null && !jsonElement.isJsonNull() ? codec.parse(JsonOps.INSTANCE, jsonElement).getOrThrow(JsonParseException::new) : null;
 	}
 
 	static {

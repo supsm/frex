@@ -21,9 +21,9 @@
 package io.vram.frex.api.buffer;
 
 import org.jetbrains.annotations.ApiStatus.Experimental;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import io.vram.frex.api.material.RenderMaterial;
@@ -44,6 +44,7 @@ public interface VertexEmitter extends VertexConsumer, QuadSink {
 	/**
 	 * @param color rgba - alpha is high byte, red and blue pre-swapped if needed
 	 */
+	@Override
 	VertexEmitter color(int color);
 
 	@Override
@@ -56,7 +57,7 @@ public interface VertexEmitter extends VertexConsumer, QuadSink {
 	VertexEmitter vertex(Matrix4f matrix, float x, float y, float z);
 
 	@Override
-	VertexEmitter normal(Matrix3f matrix, float x, float y, float z);
+	VertexEmitter normal(PoseStack.Pose matrix, float x, float y, float z);
 
 	@Override
 	VertexEmitter color(int red, int green, int blue, int alpha);

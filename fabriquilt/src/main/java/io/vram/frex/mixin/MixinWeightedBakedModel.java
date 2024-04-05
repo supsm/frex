@@ -43,7 +43,7 @@ public class MixinWeightedBakedModel implements BlockItemModel {
 	@Shadow @Final private int totalWeight;
 
 	private BakedModel getModel(RandomSource random) {
-		return WeightedRandom.getWeightedItem(list, Math.abs((int) random.nextLong()) % totalWeight).get().getData();
+		return WeightedRandom.getWeightedItem(list, Math.abs((int) random.nextLong()) % totalWeight).get().data();
 	}
 
 	@Override

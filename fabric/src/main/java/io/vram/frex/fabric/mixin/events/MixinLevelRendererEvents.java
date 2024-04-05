@@ -20,6 +20,7 @@
 
 package io.vram.frex.fabric.mixin.events;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -67,13 +68,24 @@ public class MixinLevelRendererEvents {
 	@Shadow private Minecraft minecraft;
 
 	@Unique private final WorldRenderContextBase context = new WorldRenderContextBase();
-	@Unique private boolean didRenderParticles;
 
 	@Inject(method = "renderLevel", at = @At("HEAD"))
-	private void beforeRenderLevel(PoseStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
-		context.prepare((LevelRenderer) (Object) this, matrices, tickDelta, limitTime, renderBlockOutline, camera, gameRenderer, lightTexture, matrix4f, renderBuffers.bufferSource(), level.getProfiler(), transparencyChain != null, level);
+	private void beforeRenderLevel(float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
+		context.prepare(
+				(LevelRenderer) (Object) this,
+				tickDelta,
+				limitTime,
+				renderBlockOutline,
+				camera,
+				gameRenderer,
+				lightTexture,
+				modelViewMatrix,
+				projectionMatrix,
+				renderBuffers.bufferSource(),
+				level.getProfiler(),
+				transparencyChain != null,
+				level);
 		WorldRenderStartListener.invoke(context);
-		didRenderParticles = false;
 	}
 
 	@Inject(method = "setupRender", at = @At("RETURN"))
@@ -86,13 +98,19 @@ public class MixinLevelRendererEvents {
 			method = "renderLevel",
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/client/renderer/LevelRenderer;renderSectionLayer(Lnet/minecraft/client/renderer/RenderType;Lcom/mojang/blaze3d/vertex/PoseStack;DDDLorg/joml/Matrix4f;)V",
+				target = "Lnet/minecraft/client/renderer/LevelRenderer;renderSectionLayer(Lnet/minecraft/client/renderer/RenderType;DDDLorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V",
 				ordinal = 2,
 				shift = Shift.AFTER
 			)
 	)
 	private void afterTerrainSolid(CallbackInfo ci) {
 		EntityRenderPreListener.invoke(context);
+	}
+
+	@ModifyExpressionValue(method = "renderLevel", at = @At(value = "NEW", target = "com/mojang/blaze3d/vertex/PoseStack"))
+	private PoseStack onInitPoseStack(PoseStack poseStack) {
+		context.setPoseStack(poseStack);
+		return poseStack;
 	}
 
 	@Inject(method = "renderLevel", at = @At(value = "CONSTANT", args = "stringValue=blockentities", ordinal = 0))
@@ -147,21 +165,12 @@ public class MixinLevelRendererEvents {
 	@Inject(
 			method = "renderLevel",
 			at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/particle/ParticleEngine;render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/Camera;F)V"
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/Options;getCloudsType()Lnet/minecraft/client/CloudStatus;"
 			)
 	)
-	private void onRenderParticles(CallbackInfo ci) {
-		// set a flag so we know the next pushMatrix call is after particles
-		didRenderParticles = true;
-	}
-
-	@Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V"))
 	private void beforeClouds(CallbackInfo ci) {
-		if (didRenderParticles) {
-			didRenderParticles = false;
-			TranslucentPostListener.invoke(context);
-		}
+		TranslucentPostListener.invoke(context);
 	}
 
 	@Inject(

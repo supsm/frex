@@ -53,6 +53,7 @@ public class WorldRenderContextBase implements BlockOutlineContext, WorldRenderC
 	private Frustum frustum;
 	private GameRenderer gameRenderer;
 	private LightTexture lightmapTexture;
+	private Matrix4f modelViewMatrix;
 	private Matrix4f projectionMatrix;
 	private MultiBufferSource consumers;
 	private ProfilerFiller profiler;
@@ -70,13 +71,13 @@ public class WorldRenderContextBase implements BlockOutlineContext, WorldRenderC
 
 	public void prepare(
 			LevelRenderer worldRenderer,
-			PoseStack poseStack,
 			float tickDelta,
 			long limitTime,
 			boolean blockOutlines,
 			Camera camera,
 			GameRenderer gameRenderer,
 			LightTexture lightmapTexture,
+			Matrix4f modelViewMatrix,
 			Matrix4f projectionMatrix,
 			MultiBufferSource consumers,
 			ProfilerFiller profiler,
@@ -84,18 +85,22 @@ public class WorldRenderContextBase implements BlockOutlineContext, WorldRenderC
 			ClientLevel world
 	) {
 		this.worldRenderer = worldRenderer;
-		this.poseStack = poseStack;
 		this.tickDelta = tickDelta;
 		this.limitTime = limitTime;
 		this.blockOutlines = blockOutlines;
 		this.camera = camera;
 		this.gameRenderer = gameRenderer;
 		this.lightmapTexture = lightmapTexture;
+		this.modelViewMatrix = modelViewMatrix;
 		this.projectionMatrix = projectionMatrix;
 		this.consumers = consumers;
 		this.profiler = profiler;
 		this.advancedTranslucency = advancedTranslucency;
 		this.world = world;
+	}
+
+	public void setPoseStack(PoseStack poseStack) {
+		this.poseStack = poseStack;
 	}
 
 	public void setFrustum(Frustum frustum) {
@@ -128,7 +133,7 @@ public class WorldRenderContextBase implements BlockOutlineContext, WorldRenderC
 		return poseStack;
 	}
 
-	// FAPI support
+	// Fabric API support
 	public PoseStack matrixStack() {
 		return poseStack;
 	}
@@ -151,6 +156,16 @@ public class WorldRenderContextBase implements BlockOutlineContext, WorldRenderC
 	@Override
 	public Camera camera() {
 		return camera;
+	}
+
+	@Override
+	public Matrix4f modelViewMatrix() {
+		return modelViewMatrix;
+	}
+
+	// Fabric API support
+	public Matrix4f positionMatrix() {
+		return modelViewMatrix;
 	}
 
 	@Override
@@ -183,7 +198,7 @@ public class WorldRenderContextBase implements BlockOutlineContext, WorldRenderC
 		return lightmapTexture;
 	}
 
-	// FAPI support
+	// Fabric API support
 	public LightTexture lightmapTextureManager() {
 		return lightmapTexture;
 	}
@@ -198,7 +213,7 @@ public class WorldRenderContextBase implements BlockOutlineContext, WorldRenderC
 		return advancedTranslucency;
 	}
 
-	// For fabric API support
+	// Fabric API support
 	public VertexConsumer vertexConsumer() {
 		return consumers.getBuffer(RenderType.lines());
 	}

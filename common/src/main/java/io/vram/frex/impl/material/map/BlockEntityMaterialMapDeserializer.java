@@ -30,15 +30,13 @@ import java.util.List;
 import java.util.function.BiPredicate;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.ApiStatus.Internal;
+import org.spongepowered.include.com.google.gson.JsonParseException;
 
 import com.mojang.serialization.JsonOps;
 
-import net.minecraft.Util;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -161,7 +159,7 @@ public class BlockEntityMaterialMapDeserializer {
 
 	private static StateBiPredicate loadPredicate(JsonObject obj) {
 		final StatePropertiesPredicate statePredicate = obj.has("statePredicate")
-				? Util.getOrThrow(StatePropertiesPredicate.CODEC.parse(JsonOps.INSTANCE, obj.get("statePredicate")), JsonParseException::new)
+				? StatePropertiesPredicate.CODEC.parse(JsonOps.INSTANCE, obj.get("statePredicate")).getOrThrow(JsonParseException::new)
 				: null;
 
 		final MaterialPredicate materialPredicate = obj.has("materialPredicate")

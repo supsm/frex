@@ -20,6 +20,7 @@
 
 package io.vram.frex.fabric.mixin.events;
 
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -41,5 +42,10 @@ public abstract class MixinFabricWorldRenderContext implements WorldRenderContex
 	@Override
 	public PoseStack poseStack() {
 		return ((net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext) this).matrixStack();
+	}
+
+	@Override
+	public Matrix4f modelViewMatrix() {
+		return ((net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext) this).positionMatrix();
 	}
 }

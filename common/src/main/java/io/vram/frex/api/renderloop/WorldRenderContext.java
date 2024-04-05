@@ -36,7 +36,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 
 /**
  * Except as noted below, the properties exposed here match the parameters passed to
- * {@link LevelRenderer#renderLevel(PoseStack, float, long, boolean, Camera, GameRenderer, LightTexture, Matrix4f)}.
+ * {@link LevelRenderer#renderLevel(float, long, boolean, Camera, GameRenderer, LightTexture, Matrix4f, Matrix4f)}.
  */
 public interface WorldRenderContext {
 	/**
@@ -59,6 +59,8 @@ public interface WorldRenderContext {
 	GameRenderer gameRenderer();
 
 	LightTexture lightmapTexture();
+
+	Matrix4f modelViewMatrix();
 
 	Matrix4f projectionMatrix();
 

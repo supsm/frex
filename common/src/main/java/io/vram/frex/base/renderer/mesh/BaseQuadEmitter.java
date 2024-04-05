@@ -45,8 +45,9 @@ import static io.vram.frex.base.renderer.mesh.MeshEncodingHelper.VERTEX_U0;
 import static io.vram.frex.base.renderer.mesh.MeshEncodingHelper.VERTEX_X0;
 
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -325,7 +326,7 @@ public abstract class BaseQuadEmitter extends BaseQuadView implements QuadEmitte
 	}
 
 	/**
-	 * Must call {@link #spriteId(int, int)} separately.
+	 * Must call {@link #spriteId(int)} separately.
 	 */
 	public BaseQuadEmitter spritePrecise(int vertexIndex, int u, int v) {
 		final int i = baseIndex + (vertexIndex << MESH_VERTEX_STRIDE_SHIFT) + VERTEX_U0;
@@ -553,7 +554,8 @@ public abstract class BaseQuadEmitter extends BaseQuadView implements QuadEmitte
 	}
 
 	@Override
-	public VertexEmitter normal(Matrix3f mat, float x, float y, float z) {
+	public VertexEmitter normal(PoseStack.Pose pose, float x, float y, float z) {
+		final var mat = pose.normal();
 		final float tx = mat.m00() * x + mat.m10() * y + mat.m20() * z;
 		final float ty = mat.m01() * x + mat.m11() * y + mat.m21() * z;
 		final float tz = mat.m02() * x + mat.m12() * y + mat.m22() * z;
