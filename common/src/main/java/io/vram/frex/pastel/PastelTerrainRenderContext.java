@@ -201,7 +201,7 @@ public class PastelTerrainRenderContext extends BlockRenderContext<BlockAndTintG
 	/** Lazily retrieves output buffer for given layer, initializing as needed. */
 	@SuppressWarnings("unchecked")
 	protected BufferBuilder getInitializedBuffer(RenderType renderLayer) {
-		BufferBuilder result = (BuilderBuffer)initializedBuffers.get(renderLayer);
+		BufferBuilder result = (BufferBuilder)initializedBuffers.get(renderLayer);
 
 		if (result == null) {
 			result = new BufferBuilder(buffers.buffer(renderLayer), VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);

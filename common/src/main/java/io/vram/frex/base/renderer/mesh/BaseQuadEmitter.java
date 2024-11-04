@@ -467,7 +467,7 @@ public abstract class BaseQuadEmitter extends BaseQuadView implements QuadEmitte
 		setColor(MeshEncodingHelper.packColor(red, green, blue, alpha));
 		setUv(u, v);
 		setOverlayValue(overlay);
-		uv2(light);
+		setLight(light);
 		setNormal(normalX, normalY, normalZ);
 		endVertex();
 	}
